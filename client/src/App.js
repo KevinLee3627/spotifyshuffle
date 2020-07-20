@@ -11,6 +11,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    alert('hi!')
     this.getData();
   }
 
@@ -28,7 +29,7 @@ class App extends React.Component {
 
     return (
       <div className="App">
-        React app - making request to express server
+        React app - getting data from express server!
       </div>
     );
   }
