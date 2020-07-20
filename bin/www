@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const result = require('dotenv').config()
+const result = require('dotenv').config({path: __dirname + '/.env'});
 if (result.error) {
   throw result.error
 }
