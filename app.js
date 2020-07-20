@@ -1,11 +1,11 @@
 var createError = require('http-errors');
 var express = require('express');
-var path = require('path');
+const path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const cors = require('cors');
 
-// var indexRouter = require('./routes/index');
+var indexRouter = require('./routes/index');
 const apiRouter = require('./routes/api')
 
 var app = express();
@@ -22,7 +22,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 /*--------- ROUTERS ----------*/
-// app.use('/', indexRouter);
+app.use('/', indexRouter);
 app.use('/api', apiRouter);
 
 /*--------- SPOTIFY ----------*/
@@ -45,7 +45,7 @@ function getToken() {
         console.log(app.locals);
         console.log('End of app.js logs');
     }).catch( (err) => {
-        console.log(err);
+        // console.log(err);
     })
 }
 getToken();
