@@ -29,6 +29,7 @@ class App extends React.Component {
     return (
       <div className="App">
         React app - making request to express server
+        {this.state.resultData}
       </div>
     );
   }
