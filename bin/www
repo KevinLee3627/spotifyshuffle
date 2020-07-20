@@ -1,5 +1,12 @@
 #!/usr/bin/env node
 
+const result = require('dotenv').config()
+if (result.error) {
+  throw result.error
+}
+
+console.log(result.parsed)
+
 /**
  * Module dependencies.
  */
@@ -7,7 +14,6 @@
 var app = require('../app');
 var debug = require('debug')('shuffle:server');
 var http = require('http');
-
 /**
  * Get port from environment and store in Express.
  */
