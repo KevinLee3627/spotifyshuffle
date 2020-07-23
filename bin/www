@@ -5,7 +5,7 @@ if (process.env.MODE === 'DEV') {
 }
 // else if (process.env.MODE === 'PROD') {
 //   result = require('dotenv').config({path: __dirname + '/.env'}); //FOR PROD
-}
+// }
 
 
 if (result.error) {
