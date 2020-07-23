@@ -3,7 +3,7 @@ var router = express.Router();
 const axios = require('axios');
 
 /* GET home page. */
-router.get('/api', function(req, res, next) {
+router.get('/*', function(req, res, next) {
   console.log('api requested');
 
   const spotify_base = 'https://api.spotify.com/v1/search/';

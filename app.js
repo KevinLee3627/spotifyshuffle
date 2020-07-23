@@ -43,7 +43,7 @@ function getToken() {
     }).then( (res) => {
         console.log(res.data);
         app.locals.spotify_token = res.data.access_token
-        console.log(app.locals);
+        // console.log(app.locals);
         console.log('End of app.js logs');
     }).catch( (err) => {
         console.log(err);
