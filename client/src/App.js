@@ -1,6 +1,8 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Switch, Route, Link } from "react-router-dom";
+import Landing from './components/Landing.js';
+import About from './components/About.js';
+import './App.sass';
 
 class App extends React.Component {
   constructor(props) {
@@ -11,7 +13,6 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    alert('hi!')
     this.getData();
   }
 
@@ -26,10 +27,16 @@ class App extends React.Component {
   }
 
   render() {
-
     return (
-      <div className="App">
-        React app - getting data from express server!
+      <div className='App'>
+        <Switch>
+          <Route path='/about'>
+            <About />
+          </Route>
+          <Route path='/'>
+            <Landing />
+          </Route>
+        </Switch>
       </div>
     );
   }

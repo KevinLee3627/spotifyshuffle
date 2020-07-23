@@ -46,7 +46,7 @@ function getToken() {
         console.log(app.locals);
         console.log('End of app.js logs');
     }).catch( (err) => {
-        // console.log(err);
+        console.log(err);
     })
 }
 getToken();

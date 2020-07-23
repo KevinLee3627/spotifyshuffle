@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 
-// const result = require('dotenv').config({path: __dirname + '/.env'});
-// if (result.error) {
-//   throw result.error
-// }
-// console.log(result.parsed)
+// const result = require('dotenv').config({path: __dirname + '/.env'}); //FOR PROD
+const result = require('dotenv').config(); //FOR DEV
+if (result.error) {
+  throw result.error
+}
+console.log(result.parsed)
 
 /**
  * Module dependencies.
