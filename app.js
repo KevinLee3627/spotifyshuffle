@@ -46,10 +46,11 @@ function getToken() {
         // console.log(app.locals);
         console.log('End of app.js logs');
     }).catch( (err) => {
-        console.log(err);
+        console.log('error with getting token');
+        // console.log(err);
     })
 }
-getToken();
+// getToken();
 setInterval( () => {
     getToken();
 }, 1000*60*60)
