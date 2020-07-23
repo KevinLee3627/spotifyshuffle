@@ -1,7 +1,12 @@
 #!/usr/bin/env node
+let result;
+if (process.env.MODE === 'DEV') {
+  result = require('dotenv').config(); //FOR DEV
+} else if (process.env.MODE === 'PROD') {
+  result = require('dotenv').config({path: __dirname + '/.env'}); //FOR PROD  
+}
 
-// const result = require('dotenv').config({path: __dirname + '/.env'}); //FOR PROD
-const result = require('dotenv').config(); //FOR DEV
+
 if (result.error) {
   throw result.error
 }
