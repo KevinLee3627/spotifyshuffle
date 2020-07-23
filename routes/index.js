@@ -3,9 +3,10 @@ var router = express.Router();
 const path = require('path');
 
 /* GET home page. */
-router.get('*', function(req, res, next) {
-  console.log('GETTING INDEX!');
+router.get('/', function(req, res, next) {
+  console.log('getting index');
   res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+  // res.render('index', { title: 'Express' });
 });
 
 module.exports = router;
