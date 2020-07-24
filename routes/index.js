@@ -3,7 +3,7 @@ var router = express.Router();
 const path = require('path');
 
 /* GET home page. */
-router.get('/*', function(req, res, next) {
+router.get('*', function(req, res, next) {
   console.log('index gotten');
   console.log(__dirname);
   if (process.env.MODE === 'PROD') {

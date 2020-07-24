@@ -1,5 +1,9 @@
 Features:
   ☐ Log in to spotify with OAuth
+    ☐ Make a testing redirect page
+    ☐ Figure out how to automatically redirect to authorize endpoint
+    ☐ IN PROD, make sure redirect_uri is specifically set in
+      the spotify dashboard + in api.js
   ☐ Generate N recommendations
   ☐ Play each recommendation for X amount of seconds (15?)
   ☐ For each song, give choice to add or not add to 'checkout'

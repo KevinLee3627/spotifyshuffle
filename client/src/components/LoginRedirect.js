@@ -3,20 +3,18 @@ import axios from 'axios';
 import { Link } from "react-router-dom";
 import '../App.sass';
 
-class Landing extends React.Component {
+class LoginRedirect extends React.Component {
   componentDidMount() {
-    setTimeout(() => {
-      // this.getData();
-    }, 2000)
-
+    console.log('LoginRedirect mounted');
+    // this.getData();
   }
 
   getData() {
     axios({
-      method: 'get',
+      method: 'post',
       url: '/api',
     }).then( res => {
-      console.log('LANDING.JS - AXIOS REQUEST MADE.');
+      console.log('LoginRedirect.JS - AXIOS REQUEST MADE.');
       console.log(res.data);
     }).catch( err => console.log(err))
   }
@@ -24,16 +22,11 @@ class Landing extends React.Component {
   render() {
     return (
       <section className={'hero has-background-light'}>
-        <div className={'hero-body'}>
-          <h1 className={'title is-1'}>Shuffle</h1>
+          <h1 className={'title is-1'}>Redirected!</h1>
           <p className={'subtitle'}>Lorem ipsum qqqsuhhhhhh whatever</p>
-          <button className={'button is-link'}>Log in with Spotify</button>
-          <Link to='/about'>About</Link>
-          <Link to='/login'>Login</Link>
-        </div>
       </section>
     )
   }
 }
 
-export default Landing;
+export default LoginRedirect;

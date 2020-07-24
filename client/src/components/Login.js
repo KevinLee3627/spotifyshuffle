@@ -3,26 +3,30 @@ import axios from 'axios';
 import '../App.sass';
 
 class Login extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {}
+  }
   componentDidMount() {
     this.getData();
   }
 
   getData() {
     axios({
-      method: 'post',
+      method: 'get',
       url: '/api/login',
     }).then( res => {
       console.log('LOGIN.JS - AXIOS REQUEST MADE.');
       console.log(res.data);
+      console.log(window.location);
+      this.setState({get_perms: res.data})
+      window.location.href = res.data;
     }).catch( err => console.log(err))
   }
 
   render() {
     return (
-      <section className={'hero has-background-light'}>
-          <h1 className={'title is-1'}>LOGIN</h1>
-          <p className={'subtitle'}>Lorem ipsum qqqsuhhhhhh whatever</p>
-      </section>
+      <div></div>
     )
   }
 }
