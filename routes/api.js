@@ -27,6 +27,8 @@ router.post('/*', function(req, res, next) {
   })
 });
 
-
+router.post('/login', (req, res, next) => {
+  console.log('CALL TO LOGIN RECEIVED');
+})
 
 module.exports = router;
