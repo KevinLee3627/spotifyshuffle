@@ -1,11 +1,17 @@
 #!/usr/bin/env node
 
 // const result = require('dotenv').config({path: __dirname + '/.env'}); //for prod, now unndeeded
-// const result = require('dotenv').config(); //FOR DEV
-// if (result.error) {
-//   throw result.error
-// }
-// console.log(result.parsed)
+if (!process.env.MODE) {
+  const result = require('dotenv').config(); //FOR DEV
+  if (result.error) {
+    throw result.error
+  }
+  console.log(result.parsed)
+} else if (process.env.MODE === 'prod') {
+  console.log('In heroku!');
+}
+
+
 
 /**
  * Module dependencies.
