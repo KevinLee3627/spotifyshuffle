@@ -4,32 +4,37 @@ import { Link } from "react-router-dom";
 import '../App.sass';
 
 class Landing extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
+
   componentDidMount() {
-    setTimeout(() => {
-      // this.getData();
-    }, 2000)
+    this.getData();
 
   }
 
   getData() {
     axios({
       method: 'get',
-      url: '/api',
+      url: '/api/login',
     }).then( res => {
       console.log('LANDING.JS - AXIOS REQUEST MADE.');
       console.log(res.data);
+      this.setState({auth_token_url: res.data})
     }).catch( err => console.log(err))
   }
 
   render() {
     return (
-      <section className={'hero has-background-light'}>
+      <section className={'hero is-success is-fullheight'}>
+        <div className={'hero-head'}>
+
+        </div>
         <div className={'hero-body'}>
-          <h1 className={'title is-1'}>Shuffle</h1>
+          <h1 className={'title is-1 is-centered'}>Shuffle</h1>
           <p className={'subtitle'}>Lorem ipsum qqqsuhhhhhh whatever</p>
-          <button className={'button is-link'}>Log in with Spotify</button>
-          <Link to='/about'>About</Link>
-          <Link to='/login'>Login</Link>
+          <a href={this.state.auth_token_url}>Login to Spotify</a>
         </div>
       </section>
     )
