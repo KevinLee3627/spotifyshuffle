@@ -24,10 +24,10 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'client/build')));// Handle React routing, return all requests to React app
 
 /*--------- ROUTERS ----------*/
-app.get('/callback', (req, res, next) => {
-  console.log('Callback!!!');
-  console.log(req.query);
-})
+// app.get('/callback', (req, res, next) => {
+//   console.log('Callback!!!');
+//   console.log(req.query);
+// })
 
 app.use('/api', apiRouter);
 app.use('/', indexRouter);
