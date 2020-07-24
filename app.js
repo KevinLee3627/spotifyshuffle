@@ -50,7 +50,7 @@ function getToken() {
         // console.log(err);
     })
 }
-// getToken();
+getToken();
 setInterval( () => {
     getToken();
 }, 1000*60*60)
