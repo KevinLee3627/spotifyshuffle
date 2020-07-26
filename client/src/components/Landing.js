@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
-import { Link } from "react-router-dom";
 import '../App.sass';
+
 
 class Landing extends React.Component {
   constructor(props) {
@@ -11,7 +11,6 @@ class Landing extends React.Component {
 
   componentDidMount() {
     this.getData();
-
   }
 
   getData() {
@@ -27,16 +26,18 @@ class Landing extends React.Component {
 
   render() {
     return (
-      <section className={'hero is-success is-fullheight'}>
-        <div className={'hero-head'}>
-
-        </div>
+      <div className={'hero is-success is-fullheight'}>
         <div className={'hero-body'}>
-          <h1 className={'title is-1 is-centered'}>Shuffle</h1>
-          <p className={'subtitle'}>Lorem ipsum qqqsuhhhhhh whatever</p>
-          <a href={this.state.auth_token_url}>Login to Spotify</a>
+          <div className={'container has-text-centered'}>
+            <h1 className={'title is-1'}>Shuffle</h1>
+            <h2 className={'subtitle is-4'}>Quickly discover music? or something</h2>
+            <a href={this.state.auth_token_url}
+               className={'button is-link is-rounded is-medium'}>
+               Login to Spotify
+            </a>
+          </div>
         </div>
-      </section>
+      </div>
     )
   }
 }

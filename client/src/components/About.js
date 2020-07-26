@@ -2,6 +2,9 @@ import React from 'react';
 import '../App.sass';
 
 class About extends React.Component {
+  componentDidMount() {
+    console.log(this.props.location);
+  }
   render() {
     return (
       <section className={'container has-background-primary'}>

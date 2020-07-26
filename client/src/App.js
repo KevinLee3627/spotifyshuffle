@@ -1,38 +1,40 @@
 import React from 'react';
-import { Switch, Route, Link } from "react-router-dom";
+import { Switch, Route, Redirect } from "react-router-dom";
 import Landing from './components/Landing.js';
 import About from './components/About.js';
+import Callback from './components/Callback.js';
+import Content from './components/Content.js';
 
-import axios from 'axios';
 import './App.sass';
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      resultData: {}
-    }
-  }
+function RouteSwitch(props) {
+  return (
+    <Switch>
+      <Route path='/about'>
+        <About />
+      </Route>
+      <Route path ='/callback'>
+        <Callback />
+      </Route>
+      <Route path='/content' render={(props) => <Content {...props} />}>
+      </Route>
+      {/*Should be last b/c of low specificity; will catch all requests*/}
+      <Route path='/'>
+        <Landing />
+      </Route>
+    </Switch>
+  )
+}
 
+class App extends React.Component {
   render() {
+    console.log(this.state);
     return (
       <div className='App'>
-        <Switch>
-          <Route path='/about'>
-            <About />
-          </Route>
-          <Route path ='/callback'>
-            <div>call back page</div>
-          </Route>
-          {/*Should be last b/c of low specificity; will catch all requests*/}
-          <Route path='/'>
-            <Landing />
-          </Route>
-        </Switch>
+        <RouteSwitch />
       </div>
     );
   }
-
 }
 
 export default App;
