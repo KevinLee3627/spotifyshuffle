@@ -2,8 +2,17 @@ To do:
   ☐ Authorization Flow
     ✔ Figure out how to automatically redirect to authorize endpoint @done(2020-07-24 15:49) @project(Features)
     ✔ IN PROD, make sure redirect_uri is specifically set inthe spotify dashboard + in api.js @done(2020-07-24 15:50) @project(Features)
+    ✔ How does it work w/ multiple users? How to keep the access token between requests for each client? @done(2020-07-26 14:39) @project(To do)
+    ☐ Generate random, more secure cookie sesion secret for production!
+    ☐ Implement token refresh!
 
-☐ FIGURE OUT HOW TO PASS STATE FROM APP TO CONTENT
+
+☐ Check App.sass and only import the things you actually used
+
+☐ When accessing /content, check if user is logged in
+  ☐ Maybe try and make a call w/ access token, and if token is undefined then redirect to beginning?
+
+
   ☐ Generate N recommendations
   ☐ Play each recommendation for X amount of seconds (15?)
   ☐ For each song, give choice to add or not add to 'checkout'

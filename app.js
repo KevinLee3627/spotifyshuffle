@@ -1,15 +1,16 @@
-var createError = require('http-errors');
-var express = require('express');
+const createError = require('http-errors');
+const express = require('express');
 const path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const cookieSession = require('cookie-session');
+const logger = require('morgan');
 const cors = require('cors');
 const queryString = require('query-string');
 
-var indexRouter = require('./routes/index');
+const indexRouter = require('./routes/index');
 const apiRouter = require('./routes/api')
 
-var app = express();
+let app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -19,7 +20,14 @@ app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
+app.use(cookieSession({
+  name: 'session',
+  secret: (process.env.mode === 'PROD') ? process.env.cookieSecretProd : process.env.cookieSecretDev,
+  maxAge: 1000*60*60,
+  httpOnly: true,
+  sameSite: true,
+  secure: (process.env.MODE === 'PROD') ? true : false
+}));
 // app.use(express.static(path.join(__dirname, 'public'))); //For express!
 app.use(express.static(path.join(__dirname, 'client/build')));// Handle React routing, return all requests to React app
 

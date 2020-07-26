@@ -6,17 +6,7 @@ const queryString = require('query-string');
 
 let redirect_uri = (process.env.MODE === 'PROD') ? process.env.redirectURI : 'http://localhost:3000/callback';
 
-function getProfileData(token) {
-  return axios.get('https://api.spotify.com/v1/me', {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  }).then(res => {
-    return res.data;
-  }).catch(err => {
-    console.log(err);
-  })
-}
+/*-----GETTING AUTH CODE-----*/
 
 router.get('/login', (req, res, next) => {
   console.log('CALL TO API:LOGIN RECEIVED');
@@ -28,9 +18,12 @@ router.get('/login', (req, res, next) => {
     redirect_uri: redirect_uri,
     scope: 'user-read-private'
   }
-  console.log(base+queryString.stringify(params));
   res.send(base+queryString.stringify(params))
 })
+
+
+
+/*-----GETTING ACCESS TOKEN-----*/
 
 router.post('/getToken', (req, res, next) => {
   console.log('CALL TO API:GETTOKEN RECEIVED');
@@ -55,7 +48,9 @@ router.post('/getToken', (req, res, next) => {
     url: base
   }).then(response => {
     console.log(response.data);
-    res.json(true)
+    req.session.access_token = response.data.access_token;
+    res.json(true);
+
     // getProfileData(response.data.access_token)
     //   .then(data => {
     //     console.log(data);
@@ -68,11 +63,52 @@ router.post('/getToken', (req, res, next) => {
 
 })
 
+function getProfileData(token) {
+  return axios.get('https://api.spotify.com/v1/me', {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }).then(res => {
+    return res.data;
+  }).catch(err => {
+    console.log(err);
+  })
+}
+
+/*
+████████ ███████ ███████ ████████ ██ ███    ██  ██████
+   ██    ██      ██         ██    ██ ████   ██ ██
+   ██    █████   ███████    ██    ██ ██ ██  ██ ██   ███
+   ██    ██           ██    ██    ██ ██  ██ ██ ██    ██
+   ██    ███████ ███████    ██    ██ ██   ████  ██████
+*/
+
+async function searchItems(token) {
+  return axios.get('https://api.spotify.com/v1/search', {
+    headers: {Authorization: `Bearer ${token}`},
+    params: {
+      q: 'faye webster',
+      type: 'track',
+      limit: 5
+    }
+  }).then(res => res.data)
+    .catch(err => console.log(err))
+}
+
+router.get('/test', async (req, res, next) => {
+  try {
+    let itemData = await searchItems(req.session.access_token);
+    console.log(itemData);
+    res.send(itemData);
+  } catch (error) {
+    return next(error);
+  }
+})
 
 //THIS SHOULD BE LAST BECAUSE IT IS THE LEAST SPECIFIC
 //IT SEEMS REQUESTS 'CASCADE' DOWN AND STOP AT THE FIRST ONE
 router.get('/*', function(req, res, next) {
-
+  console.log(req.session.access_token);
 });
 
 

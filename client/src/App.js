@@ -3,7 +3,7 @@ import { Switch, Route, Redirect } from "react-router-dom";
 import Landing from './components/Landing.js';
 import About from './components/About.js';
 import Callback from './components/Callback.js';
-import Content from './components/Content.js';
+import Home from './components/Home.js';
 
 import './App.sass';
 
@@ -16,8 +16,8 @@ function RouteSwitch(props) {
       <Route path ='/callback'>
         <Callback />
       </Route>
-      <Route path='/content'>
-        <Content />
+      <Route path='/home'>
+        <Home />
       </Route>
       {/*Should be last b/c of low specificity; will catch all requests*/}
       <Route path='/'>
