@@ -16,7 +16,8 @@ function RouteSwitch(props) {
       <Route path ='/callback'>
         <Callback />
       </Route>
-      <Route path='/content' render={(props) => <Content {...props} />}>
+      <Route path='/content'>
+        <Content />
       </Route>
       {/*Should be last b/c of low specificity; will catch all requests*/}
       <Route path='/'>
@@ -28,7 +29,6 @@ function RouteSwitch(props) {
 
 class App extends React.Component {
   render() {
-    console.log(this.state);
     return (
       <div className='App'>
         <RouteSwitch />

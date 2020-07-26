@@ -22,7 +22,6 @@ router.get('/login', (req, res, next) => {
   console.log('CALL TO API:LOGIN RECEIVED');
   const base = 'https://accounts.spotify.com/authorize?';
 
-  console.log('Redirect uri: ' + redirect_uri);
   let params = {
     client_id: process.env.clientID,
     response_type: 'code',
