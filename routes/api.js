@@ -58,8 +58,11 @@ router.post('/getToken', (req, res, next) => {
     headers: headers,
     url: base
   }).then(response => {
+    console.log('Logging response data from post request to spotify for accesss token');
     console.log(response.data);
     req.session.access_token = response.data.access_token;
+    console.log('Logging session after acquiring token:');
+    console.log(req.session);
     res.json(true);
 
   }).catch(err => {
@@ -112,6 +115,7 @@ router.get('/getRecommendations', async (req, res, next) => {
     // console.log(recommendations.tracks);
     res.send(recommendations.tracks);
   } catch (error) {
+    console.log(error));
     return next(error);
   }
 })
