@@ -1,6 +1,5 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import ProgressBar from './ProgressBar.js';
 import Track from './Track.js'
 import axios from 'axios';
 import '../App.sass';
