@@ -21,6 +21,7 @@ app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.set('trust proxy', 1); //Added to make cookieSession work in heroku
 app.use(cookieSession({
   name: 'session',
   secret: (process.env.MODE === 'PROD') ? process.env.cookieSecretProd : process.env.cookieSecretDev,

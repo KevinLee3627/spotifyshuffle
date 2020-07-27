@@ -105,26 +105,18 @@ async function getRecommendations(token, seed_tracks) {
 }
 
 router.get('/getRecommendations', async (req, res, next) => {
-  setTimeout(async () => {
-    console.log('CALL TO API:getRecommendations RECEIVED');
-    console.log('session.test at /getRecommendations');
+  console.log('CALL TO API:getRecommendations RECEIVED');
 
-    console.log(req.session.test);
-    console.log('getRecommendations access token:');
-    console.log(req.session.access_token);
-
-    try {
-      let seed_tracks = await getUserTopTracks(req.session.access_token);
-      // console.log(seed_tracks.items);
-      let recommendations = await getRecommendations(req.session.access_token, seed_tracks.items);
-      // console.log(recommendations.tracks);
-      res.send(recommendations.tracks);
-    } catch (error) {
-      console.log(error);
-      return next(error);
-    }
-  }, 5000)
-
+  try {
+    let seed_tracks = await getUserTopTracks(req.session.access_token);
+    // console.log(seed_tracks.items);
+    let recommendations = await getRecommendations(req.session.access_token, seed_tracks.items);
+    // console.log(recommendations.tracks);
+    res.send(recommendations.tracks);
+  } catch (error) {
+    // console.log(error);
+    return next(error);
+  }
 })
 
 /*
