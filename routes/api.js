@@ -61,8 +61,7 @@ router.post('/getToken', (req, res, next) => {
     console.log('Logging response data from post request to spotify for accesss token');
     console.log(response.data);
     req.session.access_token = response.data.access_token;
-    console.log('Logging session after acquiring token:');
-    console.log(req.session);
+    req.session.test = 'test string';
     res.json(true);
 
   }).catch(err => {
@@ -106,8 +105,10 @@ async function getRecommendations(token, seed_tracks) {
 }
 
 router.get('/getRecommendations', async (req, res, next) => {
+  console.log('Logging session at /getRecommendations');
   console.log('getRecommendations access token:');
   console.log(req.session.access_token);
+  console.log(req.session.test);
   try {
     let seed_tracks = await getUserTopTracks(req.session.access_token);
     // console.log(seed_tracks.items);
