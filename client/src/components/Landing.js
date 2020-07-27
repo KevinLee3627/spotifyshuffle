@@ -20,7 +20,6 @@ class Landing extends React.Component {
       url: '/api/login',
     }).then( res => {
       console.log('LANDING.JS - AXIOS REQUEST MADE.');
-      console.log(res.data);
       this.setState({auth_token_url: res.data})
     }).catch( err => console.log(err))
   }

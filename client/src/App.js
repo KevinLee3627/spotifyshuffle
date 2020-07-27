@@ -1,11 +1,17 @@
 import React from 'react';
 import { Switch, Route, Redirect } from "react-router-dom";
+
 import Landing from './components/Landing.js';
 import About from './components/About.js';
 import Callback from './components/Callback.js';
 import Home from './components/Home.js';
 
 import './App.sass';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { fas } from '@fortawesome/free-solid-svg-icons'
+import { far } from '@fortawesome/free-regular-svg-icons'
+library.add(fas, far)
+
 
 function RouteSwitch(props) {
   return (
