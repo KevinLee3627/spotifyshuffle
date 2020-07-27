@@ -115,7 +115,7 @@ router.get('/getRecommendations', async (req, res, next) => {
     // console.log(recommendations.tracks);
     res.send(recommendations.tracks);
   } catch (error) {
-    console.log(error));
+    console.log(error);
     return next(error);
   }
 })
