@@ -14,7 +14,8 @@ To do:
 
 
   ☐ Generate N recommendations
-  ☐ Play each recommendation for X amount of seconds (15?)
+    ☐ Based on top tracks? Recently listened tracks? Random?
+  ✔ Play each recommendation for X amount of seconds (15?) @done(2020-07-27 12:21)
   ☐ For each song, give choice to add or not add to 'checkout'
     ☐ Live list of songs added so far? Maybe only on desktop
   ☐ At the end of all recommendations, show list of all songs that were chosen and

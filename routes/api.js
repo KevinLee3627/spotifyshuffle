@@ -6,7 +6,13 @@ const queryString = require('query-string');
 
 let redirect_uri = (process.env.MODE === 'PROD') ? process.env.redirectURI : 'http://localhost:3000/callback';
 
-/*-----GETTING AUTH CODE-----*/
+/*
+ █████  ██    ██ ████████ ██   ██      ██████  ██████  ██████  ███████
+██   ██ ██    ██    ██    ██   ██     ██      ██    ██ ██   ██ ██
+███████ ██    ██    ██    ███████     ██      ██    ██ ██   ██ █████
+██   ██ ██    ██    ██    ██   ██     ██      ██    ██ ██   ██ ██
+██   ██  ██████     ██    ██   ██      ██████  ██████  ██████  ███████
+*/
 
 router.get('/login', (req, res, next) => {
   console.log('CALL TO API:LOGIN RECEIVED');
@@ -16,14 +22,19 @@ router.get('/login', (req, res, next) => {
     client_id: process.env.clientID,
     response_type: 'code',
     redirect_uri: redirect_uri,
-    scope: 'user-read-private'
+    scope: 'user-read-private user-top-read'
   }
   res.send(base+queryString.stringify(params))
 })
 
 
-
-/*-----GETTING ACCESS TOKEN-----*/
+/*
+ █████   ██████  ██████ ███████ ███████ ███████     ████████  ██████  ██   ██ ███████ ███    ██
+██   ██ ██      ██      ██      ██      ██             ██    ██    ██ ██  ██  ██      ████   ██
+███████ ██      ██      █████   ███████ ███████        ██    ██    ██ █████   █████   ██ ██  ██
+██   ██ ██      ██      ██           ██      ██        ██    ██    ██ ██  ██  ██      ██  ██ ██
+██   ██  ██████  ██████ ███████ ███████ ███████        ██     ██████  ██   ██ ███████ ██   ████
+*/
 
 router.post('/getToken', (req, res, next) => {
   console.log('CALL TO API:GETTOKEN RECEIVED');
@@ -51,11 +62,6 @@ router.post('/getToken', (req, res, next) => {
     req.session.access_token = response.data.access_token;
     res.json(true);
 
-    // getProfileData(response.data.access_token)
-    //   .then(data => {
-    //     console.log(data);
-    //     res.json(data)
-    //   })
   }).catch(err => {
     console.log(err);
     res.json(false)
@@ -63,47 +69,59 @@ router.post('/getToken', (req, res, next) => {
 
 })
 
-function getProfileData(token) {
-  return axios.get('https://api.spotify.com/v1/me', {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  }).then(res => {
-    return res.data;
-  }).catch(err => {
-    console.log(err);
-  })
-}
 
 /*
-████████ ███████ ███████ ████████ ██ ███    ██  ██████
-   ██    ██      ██         ██    ██ ████   ██ ██
-   ██    █████   ███████    ██    ██ ██ ██  ██ ██   ███
-   ██    ██           ██    ██    ██ ██  ██ ██ ██    ██
-   ██    ███████ ███████    ██    ██ ██   ████  ██████
+████████  ██████  ██████      ████████ ██████   █████   ██████ ██   ██ ███████
+   ██    ██    ██ ██   ██        ██    ██   ██ ██   ██ ██      ██  ██  ██
+   ██    ██    ██ ██████         ██    ██████  ███████ ██      █████   ███████
+   ██    ██    ██ ██             ██    ██   ██ ██   ██ ██      ██  ██       ██
+   ██     ██████  ██             ██    ██   ██ ██   ██  ██████ ██   ██ ███████
 */
 
-async function searchItems(token) {
-  return axios.get('https://api.spotify.com/v1/search', {
+async function getUserTopTracks(token) {
+  return axios.get('https://api.spotify.com/v1/me/top/tracks', {
     headers: {Authorization: `Bearer ${token}`},
     params: {
-      q: 'faye webster',
-      type: 'track',
+      limit: 5,
+      time_range: 'long_term' //change this later maybe?
+    }
+  }).then(res => res.data)
+    .catch(err => console.log(err))
+}
+
+async function getRecommendations(token, seed_tracks) {
+  let seed_track_ids = seed_tracks.map(track => track.id);
+  console.log(seed_track_ids);
+  return axios.get('https://api.spotify.com/v1/recommendations', {
+    headers: {Authorization: `Bearer ${token}`},
+    params: {
+      seed_tracks: seed_track_ids.join(','),
       limit: 5
     }
   }).then(res => res.data)
     .catch(err => console.log(err))
 }
 
-router.get('/test', async (req, res, next) => {
+router.get('/getRecommendations', async (req, res, next) => {
   try {
-    let itemData = await searchItems(req.session.access_token);
-    console.log(itemData);
-    res.send(itemData);
+    let seed_tracks = await getUserTopTracks(req.session.access_token);
+    // console.log(seed_tracks.items);
+    let recommendations = await getRecommendations(req.session.access_token, seed_tracks.items);
+    // console.log(recommendations.tracks);
+    res.send(recommendations.tracks);
   } catch (error) {
     return next(error);
   }
 })
+
+/*
+██████  ███████  ██████  ██████  ███    ███ ███    ███ ███████ ███    ██ ██████   █████  ████████ ██  ██████  ███    ██ ███████
+██   ██ ██      ██      ██    ██ ████  ████ ████  ████ ██      ████   ██ ██   ██ ██   ██    ██    ██ ██    ██ ████   ██ ██
+██████  █████   ██      ██    ██ ██ ████ ██ ██ ████ ██ █████   ██ ██  ██ ██   ██ ███████    ██    ██ ██    ██ ██ ██  ██ ███████
+██   ██ ██      ██      ██    ██ ██  ██  ██ ██  ██  ██ ██      ██  ██ ██ ██   ██ ██   ██    ██    ██ ██    ██ ██  ██ ██      ██
+██   ██ ███████  ██████  ██████  ██      ██ ██      ██ ███████ ██   ████ ██████  ██   ██    ██    ██  ██████  ██   ████ ███████
+*/
+
 
 //THIS SHOULD BE LAST BECAUSE IT IS THE LEAST SPECIFIC
 //IT SEEMS REQUESTS 'CASCADE' DOWN AND STOP AT THE FIRST ONE

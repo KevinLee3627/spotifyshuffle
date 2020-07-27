@@ -10,6 +10,7 @@ const queryString = require('query-string');
 const indexRouter = require('./routes/index');
 const apiRouter = require('./routes/api')
 
+require('express-async-errors');
 let app = express();
 
 // view engine setup
@@ -22,7 +23,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieSession({
   name: 'session',
-  secret: (process.env.mode === 'PROD') ? process.env.cookieSecretProd : process.env.cookieSecretDev,
+  secret: (process.env.MODE === 'PROD') ? process.env.cookieSecretProd : process.env.cookieSecretDev,
   maxAge: 1000*60*60,
   httpOnly: true,
   sameSite: true,
