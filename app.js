@@ -37,35 +37,6 @@ app.use('/api', apiRouter);
 app.use('/', indexRouter);
 
 
-/*--------- SPOTIFY ----------*/
-// const axios = require('axios');
-// const spotify_url = 'https://accounts.spotify.com/api/token';
-// const to_encode = `${process.env.clientID}:${process.env.clientSecret}`;
-// const encoded_auth = Buffer.from(to_encode).toString('base64');
-// function getToken() {
-//     axios({
-//         method: 'post',
-//         url: spotify_url,
-//         headers: {
-//             'Authorization': `Basic ${encoded_auth}`,
-//             'Content-Type': 'application/x-www-form-urlencoded'
-//         },
-//         params: {'grant_type': 'client_credentials'}
-//     }).then( (res) => {
-//         console.log(res.data);
-//         app.locals.spotify_token = res.data.access_token
-//         // console.log(app.locals);
-//         console.log('End of app.js logs');
-//     }).catch( (err) => {
-//         console.log('error with getting token');
-//         // console.log(err);
-//     })
-// }
-// getToken();
-// setInterval( () => {
-//     getToken();
-// }, 1000*60*60)
-
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));

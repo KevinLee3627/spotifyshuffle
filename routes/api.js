@@ -103,6 +103,8 @@ async function getRecommendations(token, seed_tracks) {
 }
 
 router.get('/getRecommendations', async (req, res, next) => {
+  console.log('getRecommendations access token:');
+  console.log(req.session.access_token);
   try {
     let seed_tracks = await getUserTopTracks(req.session.access_token);
     // console.log(seed_tracks.items);

@@ -34,7 +34,7 @@ class Home extends React.Component {
   async getRecommendationsFromServer() {
     return axios.get('/api/getRecommendations')
                 .then( res => res.data)
-                .catch( err => err)
+                .catch( err => err.data)
   }
 
   initAudio(track) {
