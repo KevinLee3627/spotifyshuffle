@@ -1,6 +1,12 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Track from './Track.js'
+
+import cloneDeep from 'lodash/cloneDeep';
+
+import NavBar from './NavBar.js';
+import Track from './Track.js';
+import ActionButtons from './ActionButtons';
+// import InstructionModal from './InstructionModal';
+import History from './History';
 import axios from 'axios';
 import '../App.sass';
 
@@ -10,12 +16,19 @@ class Home extends React.Component {
     super(props);
     this.state = {
       image_url: null,
+      audio_obj: null,
       audio_progress: 0,
       current_track: null,
-      recommendations: []
+      recommendations: [],
+      track_history: [],
+      history_showing: false,
+      liked_tracks: [],
+      disliked_tracks: []
     }
     this.initAudio = this.initAudio.bind(this);
     this.trackAudioProgress = this.trackAudioProgress.bind(this);
+    this.toggleHistory = this.toggleHistory.bind(this);
+    this.updateTrackLikedStatus = this.updateTrackLikedStatus.bind(this);
   }
 
   async componentDidMount() {
@@ -37,8 +50,13 @@ class Home extends React.Component {
                 .catch( err => err.data)
   }
 
+  /*------------------------------------------*/
+  /*-------------------AUDIO------------------*/
+  /*------------------------------------------*/
+
   initAudio(track) {
     if (track.preview_url) {//Some tracks do not provide a preview_url!
+      this.addToHistory(track);
       let image = track.album.images[0];
       let audio = new Audio(track.preview_url);
       audio.preload = 'metadata';
@@ -56,7 +74,7 @@ class Home extends React.Component {
   }
 
   trackAudioProgress() {
-    let audio_length = this.state.audio_obj.duration/1;
+    let audio_length = this.state.audio_obj.duration/6;
     let current_time = this.state.audio_obj.currentTime;
     let percent_progress = current_time/audio_length;
     this.setState({ audio_progress: percent_progress*100 }, () => {
@@ -73,6 +91,7 @@ class Home extends React.Component {
   playNextTrack() {
     console.log('Playing next track!');
     this.setState(old_state => {
+      this.state.audio_obj.pause();
       return {
         current_track: old_state.recommendations[1],
         recommendations: old_state.recommendations.slice(1)
@@ -86,29 +105,57 @@ class Home extends React.Component {
     })
   }
 
+  /*------------------------------------------*/
+  /*-----------------HISTORY------------------*/
+  /*------------------------------------------*/
+  addToHistory(track) {
+    this.setState(old_state => {
+      return {track_history: old_state.track_history.concat([track])}
+    })
+  }
+
+  toggleHistory() {
+    console.log('history showing: ');
+    console.log(this.state.history_showing);
+    this.setState(old_state => {
+      return {history_showing: !old_state.history_showing}
+    })
+  }
+
+  /*------------------------------------------*/
+  /*---------------LIKED TRACKS---------------*/
+  /*------------------------------------------*/
+  updateTrackLikedStatus(e, bool) {
+    this.setState(old_state => {
+      let updated_current_track = cloneDeep(old_state.current_track);
+      updated_current_track.is_liked = bool;
+      let updated_history = old_state.track_history.map( track => {
+        return (track.id === updated_current_track.id) ? updated_current_track : track
+      })
+      return {track_history:  updated_history}
+    }, () => {this.playNextTrack()})
+  }
+
+
 
   render() {
     return(
       <section className={'section'}>
+        <NavBar />
         <Track
           image_url={this.state.image_url}
           current_track={this.state.current_track}
           audio_progress={this.state.audio_progress}
         />
-        <div className={'level is-mobile'}>
-          <div className={'level-item'}>
-            <button className={'button'}>
-              <FontAwesomeIcon icon={'fas', 'plus-square'} />
-              <span> Add</span>
-            </button>
-          </div>
-          <div className={'level-item'}>
-            <button className={'button'}>
-              <FontAwesomeIcon icon={'far', 'forward'} />
-              <span> Skip</span>
-            </button>
-          </div>
-        </div>
+        <ActionButtons
+          toggleHistory={this.toggleHistory}
+          updateTrackLikedStatus={this.updateTrackLikedStatus}
+          current_track={this.state.current_track}
+        />
+        <History
+          track_history={this.state.track_history}
+          history_showing={this.state.history_showing}
+        />
       </section>
     )
   }

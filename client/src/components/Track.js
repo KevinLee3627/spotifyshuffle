@@ -4,7 +4,7 @@ import '../App.sass';
 function Track(props) {
   if(props.current_track) {
     return (
-      <div className={'box'}>
+      <div className={'box mt-5'}>
         <figure className={'image is-square'}>
           <img src={props.image_url}></img>
         </figure>
