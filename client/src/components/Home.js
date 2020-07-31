@@ -21,9 +21,7 @@ class Home extends React.Component {
       current_track: null,
       recommendations: [],
       track_history: [],
-      history_showing: false,
-      liked_tracks: [],
-      disliked_tracks: []
+      history_showing: false
     }
     this.initAudio = this.initAudio.bind(this);
     this.trackAudioProgress = this.trackAudioProgress.bind(this);
