@@ -88,7 +88,7 @@ class Home extends React.Component {
 
   playNextTrack() {
     this.setState(old_state => {
-      if (old_state.audio_obj) old_state.audio_obj.pause();
+      old_state.audio_obj.pause();
       return {
         current_track: old_state.recommendations[1],
         recommendations: old_state.recommendations.slice(1)
