@@ -47,15 +47,17 @@ function HistoryItemContent(props) {
 class History extends React.Component {
   createHistoryItems() {
     let tracks = this.props.track_history.map((track, i) => {
-
-        return (
-          <HistoryItem
-            track_data={track}
-            key={i}
-            id={i}
-            is_liked={track.is_liked}
-          />
-        )
+      let track_liked_status = this.props.tracks_liked_status.filter(track_data => {
+        return track_data.track_id === track.id;
+      })
+      return (
+        <HistoryItem
+          track_data={track}
+          key={i}
+          id={i}
+          is_liked={track_liked_status.length}
+        />
+      )
     }).reverse()
     return tracks;
   }

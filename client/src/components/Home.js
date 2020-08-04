@@ -21,6 +21,7 @@ class Home extends React.Component {
       current_track: null,
       recommendations: [],
       track_history: [],
+      tracks_liked_status: [],
       history_showing: true
     }
     this.initAudio = this.initAudio.bind(this);
@@ -120,17 +121,25 @@ class Home extends React.Component {
   /*------------------------------------------*/
   /*---------------LIKED TRACKS---------------*/
   /*------------------------------------------*/
-  updateTrackLikedStatus(e, bool) {
+  // updateTrackLikedStatus(e, bool) {
+  //   this.setState(old_state => {
+  //     let updated_current_track = cloneDeep(old_state.current_track);
+  //     updated_current_track.is_liked = bool;
+  //     let updated_history = old_state.track_history.map( track => {
+  //       return (track.id === updated_current_track.id) ? updated_current_track : track
+  //     })
+  //     return {track_history:  updated_history}
+  //   }, () => {
+  //     this.playNextTrack();
+  //   })
+  // }
+
+  updateTrackLikedStatus(e, bool, track) {
+    console.log('asdfasdf');
     this.setState(old_state => {
-      let updated_current_track = cloneDeep(old_state.current_track);
-      updated_current_track.is_liked = bool;
-      let updated_history = old_state.track_history.map( track => {
-        return (track.id === updated_current_track.id) ? updated_current_track : track
-      })
-      return {track_history:  updated_history}
-    }, () => {
-      this.playNextTrack();
-    })
+      let track_data = {track_id: track.id, liked: bool}
+      return {tracks_liked_status: old_state.tracks_liked_status.concat( [track_data] )}
+    }, () => {this.playNextTrack()} )
   }
 
 
@@ -151,12 +160,15 @@ class Home extends React.Component {
               current_track={this.state.current_track}
             />
           </div>
-          <div className={'column is-8'}>
+
+{/*          <div className={'column is-8'}>
             <History
+              tracks_liked_status={this.state.tracks_liked_status}
               track_history={this.state.track_history}
               history_showing={this.state.history_showing}
             />
-          </div>
+          </div>*/}
+
         </div>
       </section>
     )
