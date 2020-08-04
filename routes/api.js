@@ -98,7 +98,7 @@ async function getRecommendations(token, seed_tracks) {
     headers: {Authorization: `Bearer ${token}`},
     params: {
       seed_tracks: seed_track_ids.join(','),
-      limit: 5
+      limit: 10
     }
   }).then(res => res.data)
     .catch(err => console.log(err))

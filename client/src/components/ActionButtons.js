@@ -25,7 +25,7 @@ class ActionButtons extends React.Component {
             <span className={'ml-1'}>Skip</span>
           </button>
         </div>
-        <div className={'level-item'}>
+        <div className={'level-item is-hidden-desktop'}>
           <button className={'button'} onClick={this.props.toggleHistory}>
             <FontAwesomeIcon icon={'far', 'history'} />
             <span className={'ml-1'}>History</span>

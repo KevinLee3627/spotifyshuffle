@@ -21,7 +21,7 @@ class Home extends React.Component {
       current_track: null,
       recommendations: [],
       track_history: [],
-      history_showing: false
+      history_showing: true
     }
     this.initAudio = this.initAudio.bind(this);
     this.trackAudioProgress = this.trackAudioProgress.bind(this);
@@ -72,7 +72,7 @@ class Home extends React.Component {
   }
 
   trackAudioProgress() {
-    let audio_length = this.state.audio_obj.duration/6;
+    let audio_length = this.state.audio_obj.duration/5;
     let current_time = this.state.audio_obj.currentTime;
     let percent_progress = current_time/audio_length;
     this.setState({ audio_progress: percent_progress*100 }, () => {
@@ -87,9 +87,8 @@ class Home extends React.Component {
   }
 
   playNextTrack() {
-    console.log('Playing next track!');
     this.setState(old_state => {
-      this.state.audio_obj.pause();
+      if (old_state.audio_obj) old_state.audio_obj.pause();
       return {
         current_track: old_state.recommendations[1],
         recommendations: old_state.recommendations.slice(1)
@@ -113,8 +112,6 @@ class Home extends React.Component {
   }
 
   toggleHistory() {
-    console.log('history showing: ');
-    console.log(this.state.history_showing);
     this.setState(old_state => {
       return {history_showing: !old_state.history_showing}
     })
@@ -131,7 +128,9 @@ class Home extends React.Component {
         return (track.id === updated_current_track.id) ? updated_current_track : track
       })
       return {track_history:  updated_history}
-    }, () => {this.playNextTrack()})
+    }, () => {
+      this.playNextTrack();
+    })
   }
 
 
@@ -139,21 +138,26 @@ class Home extends React.Component {
   render() {
     return(
       <section className={'section'}>
-        <NavBar />
-        <Track
-          image_url={this.state.image_url}
-          current_track={this.state.current_track}
-          audio_progress={this.state.audio_progress}
-        />
-        <ActionButtons
-          toggleHistory={this.toggleHistory}
-          updateTrackLikedStatus={this.updateTrackLikedStatus}
-          current_track={this.state.current_track}
-        />
-        <History
-          track_history={this.state.track_history}
-          history_showing={this.state.history_showing}
-        />
+        <div className={'columns'}>
+          <div className={'column is-4'}>
+            <Track
+              image_url={this.state.image_url}
+              current_track={this.state.current_track}
+              audio_progress={this.state.audio_progress}
+            />
+            <ActionButtons
+              toggleHistory={this.toggleHistory}
+              updateTrackLikedStatus={this.updateTrackLikedStatus}
+              current_track={this.state.current_track}
+            />
+          </div>
+          <div className={'column is-8'}>
+            <History
+              track_history={this.state.track_history}
+              history_showing={this.state.history_showing}
+            />
+          </div>
+        </div>
       </section>
     )
   }
