@@ -91,14 +91,14 @@ async function getUserTopTracks(token) {
     .catch(err => console.log(err))
 }
 
-async function getRecommendations(token, seed_tracks) {
+async function getRecommendations(token, seed_tracks, limit) {
   let seed_track_ids = seed_tracks.map(track => track.id);
   console.log(seed_track_ids);
   return axios.get('https://api.spotify.com/v1/recommendations', {
     headers: {Authorization: `Bearer ${token}`},
     params: {
       seed_tracks: seed_track_ids.join(','),
-      limit: 10
+      limit: limit
     }
   }).then(res => res.data)
     .catch(err => console.log(err))
@@ -106,11 +106,12 @@ async function getRecommendations(token, seed_tracks) {
 
 router.get('/getRecommendations', async (req, res, next) => {
   console.log('CALL TO API:getRecommendations RECEIVED');
-
+  console.log(`Limit: ${req.query.limit}`);
+  const limit = req.query.limit;
   try {
     let seed_tracks = await getUserTopTracks(req.session.access_token);
     // console.log(seed_tracks.items);
-    let recommendations = await getRecommendations(req.session.access_token, seed_tracks.items);
+    let recommendations = await getRecommendations(req.session.access_token, seed_tracks.items, limit);
     // console.log(recommendations.tracks);
     res.send(recommendations.tracks);
   } catch (error) {

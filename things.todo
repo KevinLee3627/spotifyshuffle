@@ -7,24 +7,36 @@ To do:
     ☐ Implement token refresh!
 
 
-☐ Check App.sass and only import the things you actually used
+✔ Check App.sass and only import the things you actually used @done(2020-07-30 19:23)
 
 ☐ When accessing /content, check if user is logged in
   ☐ Maybe try and make a call w/ access token, and if token is undefined then redirect to beginning?
 
-
-☐ Sometimes when getting recommendations, some tracks will have no preview_url
-☐ In these cases, make a second call with a limit parameter that
-  gets more tracks based on how many are missing. For example --
-  First call gets 10 recommendations, 3 of which have no preview_url and thus
-  cannot be played in browser. second call to /getRecommendations with limit
-  parameter equal to 3 is made and returned, ad infinitum until sufficient
-  amount of recommendations are returned.
-
-  ☐ Generate N recommendations
-    ☐ Based on top tracks? Recently listened tracks? Random?
-  ✔ Play each recommendation for X amount of seconds (15?) @done(2020-07-27 12:21)
   ☐ For each song, give choice to add or not add to 'checkout'
     ☐ Live list of songs added so far? Maybe only on desktop
   ☐ At the end of all recommendations, show list of all songs that were chosen and
     let them create a new playlist
+
+
+☐ START HANDLING THINGS WHEN THE SONGS RUN out
+☐ After all songs play, what should pop out?
+
+Audio flow:
+  0. initialAudioSetup()
+      - sets up audio element + preload attribute
+      - puts element into state
+  1. initTrack()
+      - set src attribute on audio_obj in state to new preview_url
+      - load track data
+  2. playTrack()
+      - start playing track Audio
+      - start tracking Audio progress
+  3. trackAudioProgress()
+      - update progressbar w/ RAF
+      - if progress is complete,
+  4. switchCurrentTrack
+      - pause any previously playing Audio
+      - updates recs and current_track in state
+      - checks if current_track is null
+        - if not null: call initTrack with new current_track, start from step 1
+        - if null:

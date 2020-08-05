@@ -6,7 +6,7 @@ function Track(props) {
     return (
     <div className={'box'}>
         <figure className={'image'}>
-          <img src={props.image_url}></img>
+          <img src={props.current_track.album.images[0].url}></img>
         </figure>
         <div className={'container my-3'}>
           <progress

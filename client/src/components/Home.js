@@ -15,93 +15,115 @@ class Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      image_url: null,
-      audio_obj: null,
-      audio_progress: 0,
-      current_track: null,
-      recommendations: [],
-      track_history: [],
-      tracks_liked_status: [],
-      history_showing: true
+      // image_url: null,
+      // audio_obj: null,
+      // audio_progress: 0,
+      // current_track: {},
+      // recs: [],
+      // track_history: [],
+      // tracks_liked_status: [],
+      // history_showing: true
     }
-    this.initAudio = this.initAudio.bind(this);
+    this.getRecommendationsFromServer = this.getRecommendationsFromServer.bind(this);
+    this.initTrack = this.initTrack.bind(this);
     this.trackAudioProgress = this.trackAudioProgress.bind(this);
-    this.toggleHistory = this.toggleHistory.bind(this);
-    this.updateTrackLikedStatus = this.updateTrackLikedStatus.bind(this);
+    this.playTrack = this.playTrack.bind(this);
+    // this.toggleHistory = this.toggleHistory.bind(this);
+    // this.updateTrackLikedStatus = this.updateTrackLikedStatus.bind(this);
   }
 
   async componentDidMount() {
     console.log('Home component mounted. Calling function');
-    let recommendations = await this.getRecommendationsFromServer();
-    console.log(recommendations);
-    this.setState({
-      recommendations: recommendations,
-      current_track: recommendations[0]
-    }, () => {
-      this.initAudio(this.state.recommendations[0]);
-    })
-
+    this.getRecommendationsFromServer([], 20, 10);
   }
 
-  async getRecommendationsFromServer() {
-    return axios.get('/api/getRecommendations')
-                .then( res => res.data)
-                .catch( err => err.data)
+  getRecommendationsFromServer(data, limit, desired) {
+    data = this.filterRecommendations(data);
+    if (data.length < desired) {
+      let recs = axios.get(`/api/getRecommendations/?limit=${limit}`)
+                      .then( res => {
+                        let total_data = data.concat(res.data);
+                        total_data = this.filterRecommendations(total_data)
+                        this.getRecommendationsFromServer(total_data, limit, desired)
+                      })
+                      .catch( err => err.data)
+    } else {
+      this.setState({
+        recs: data.slice(0, desired),
+        current_track: data.slice(0, 1)[0]
+      }, () => {
+        console.log('Initial state set. Now playing first song. Next line logs current state.');
+        console.log(this.state);
+        this.initialAudioSetup();
+      })
+    }
   }
+
+  filterRecommendations(recs) {
+    return recs.filter(rec => rec.preview_url != null)
+  }
+
 
   /*------------------------------------------*/
   /*-------------------AUDIO------------------*/
   /*------------------------------------------*/
+  initialAudioSetup() {
+    let audio = new Audio();
+    audio.preload = 'metadata';
+    this.setState({ audio_obj: audio }, () => {
+      this.initTrack(this.state.current_track)
+    })
+  }
 
-  initAudio(track) {
-    if (track.preview_url) {//Some tracks do not provide a preview_url!
-      this.addToHistory(track);
-      let image = track.album.images[0];
-      let audio = new Audio(track.preview_url);
-      audio.preload = 'metadata';
-      audio.onloadedmetadata = () => {
-        this.setState({
-          image_url: image.url,
-          audio_obj: audio,
-          audio_progress: 0
-        }, () => {
-          this.state.audio_obj.play();
-          this.trackAudioProgress();
-        })
-      }
-    } else {this.playNextTrack()}
+  initTrack(track) {
+    let new_audio_obj = this.state.audio_obj;
+    new_audio_obj.src = this.state.current_track.preview_url;
+    new_audio_obj.load();
+    new_audio_obj.onloadedmetadata = () => {
+      this.setState({ audio_obj: new_audio_obj}, () => {
+        this.playTrack();
+      })
+    }
+  }
+
+  playTrack() {
+    this.state.audio_obj.play();
+    this.trackAudioProgress();
   }
 
   trackAudioProgress() {
-    let audio_length = this.state.audio_obj.duration/5;
+    let audio_length = this.state.audio_obj.duration/6;
     let current_time = this.state.audio_obj.currentTime;
     let percent_progress = current_time/audio_length;
     this.setState({ audio_progress: percent_progress*100 }, () => {
       if (percent_progress < 1) {
         window.requestAnimationFrame(this.trackAudioProgress);
       } else if (percent_progress >= 1) {
-        console.log('Song done playing.');
-        this.state.audio_obj.pause();
-        this.playNextTrack();
+        console.log(`Song ${this.state.current_track.name} done playing.`);
+
+        this.switchCurrentTrack();
       }
     })
   }
 
-  playNextTrack() {
-    this.setState(old_state => {
-      old_state.audio_obj.pause();
-      return {
-        current_track: old_state.recommendations[1],
-        recommendations: old_state.recommendations.slice(1)
-      }
+  switchCurrentTrack() {
+    this.state.audio_obj.pause();
+    let new_recs = this.state.recs.slice(1);
+    let new_current_track = new_recs.length > 1 ? this.state.recs[1] : null;
+    this.setState({
+        recs: new_recs,
+        current_track: new_current_track
     }, () => {
-      if (this.state.recommendations.length > 0) {
-        this.initAudio(this.state.recommendations[0])
+      if (this.state.current_track != null) {
+        console.log(`Switching track to ${new_current_track.name}`);
+        this.initTrack(this.state.current_track)
       } else {
-        console.log('No songs to recommend!');
+        alert('no songs left to play')
       }
     })
   }
+
+
 
   /*------------------------------------------*/
   /*-----------------HISTORY------------------*/
@@ -121,26 +143,13 @@ class Home extends React.Component {
   /*------------------------------------------*/
   /*---------------LIKED TRACKS---------------*/
   /*------------------------------------------*/
-  // updateTrackLikedStatus(e, bool) {
+  // updateTrackLikedStatus(e, bool, track) {
+  //   console.log('asdfasdf');
   //   this.setState(old_state => {
-  //     let updated_current_track = cloneDeep(old_state.current_track);
-  //     updated_current_track.is_liked = bool;
-  //     let updated_history = old_state.track_history.map( track => {
-  //       return (track.id === updated_current_track.id) ? updated_current_track : track
-  //     })
-  //     return {track_history:  updated_history}
-  //   }, () => {
-  //     this.playNextTrack();
-  //   })
+  //     let track_data = {track_id: track.id, liked: bool}
+  //     return {tracks_liked_status: old_state.tracks_liked_status.concat( [track_data] )}
+  //   }, () => {this.playNextTrack()} )
   // }
-
-  updateTrackLikedStatus(e, bool, track) {
-    console.log('asdfasdf');
-    this.setState(old_state => {
-      let track_data = {track_id: track.id, liked: bool}
-      return {tracks_liked_status: old_state.tracks_liked_status.concat( [track_data] )}
-    }, () => {this.playNextTrack()} )
-  }
 
 
 
@@ -149,32 +158,32 @@ class Home extends React.Component {
       <section className={'section'}>
         <div className={'columns'}>
           <div className={'column is-4'}>
+            <audio src={this.state.audio_url}></audio>
             <Track
-              image_url={this.state.image_url}
               current_track={this.state.current_track}
               audio_progress={this.state.audio_progress}
             />
             <ActionButtons
+              playNextTrack={this.playNextTrack}
               toggleHistory={this.toggleHistory}
               updateTrackLikedStatus={this.updateTrackLikedStatus}
               current_track={this.state.current_track}
             />
           </div>
-
-{/*          <div className={'column is-8'}>
+{/*
+          <div className={'column is-8'}>
             <History
               tracks_liked_status={this.state.tracks_liked_status}
               track_history={this.state.track_history}
               history_showing={this.state.history_showing}
             />
-          </div>*/}
+          </div>
+*/}
 
         </div>
       </section>
     )
   }
 }
-
-
 
 export default Home;
