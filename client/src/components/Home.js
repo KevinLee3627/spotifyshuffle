@@ -24,10 +24,12 @@ class Home extends React.Component {
       // tracks_liked_status: [],
       // history_showing: true
     }
-    this.getRecommendationsFromServer = this.getRecommendationsFromServer.bind(this);
-    this.initTrack = this.initTrack.bind(this);
     this.trackAudioProgress = this.trackAudioProgress.bind(this);
-    this.playTrack = this.playTrack.bind(this);
+    this.switchCurrentTrack = this.switchCurrentTrack.bind(this);
+    // this.getRecommendationsFromServer = this.getRecommendationsFromServer.bind(this);
+    // this.initTrack = this.initTrack.bind(this);
+
+    // this.playTrack = this.playTrack.bind(this);
     // this.toggleHistory = this.toggleHistory.bind(this);
     // this.updateTrackLikedStatus = this.updateTrackLikedStatus.bind(this);
   }
@@ -116,9 +118,9 @@ class Home extends React.Component {
     }, () => {
       if (this.state.current_track != null) {
         console.log(`Switching track to ${new_current_track.name}`);
-        this.initTrack(this.state.current_track)
+        this.initTrack(this.state.current_track);
       } else {
-        alert('no songs left to play')
+        alert('no songs left to play');
       }
     })
   }
@@ -164,7 +166,7 @@ class Home extends React.Component {
               audio_progress={this.state.audio_progress}
             />
             <ActionButtons
-              playNextTrack={this.playNextTrack}
+              switchCurrentTrack={this.switchCurrentTrack}
               toggleHistory={this.toggleHistory}
               updateTrackLikedStatus={this.updateTrackLikedStatus}
               current_track={this.state.current_track}

@@ -30,13 +30,13 @@ class ActionButtons extends React.Component {
         <div className={'level-item'}>
           <button
             className={'button'}
-            onClick={(e) => this.props.playNextTrack()}
+            onClick={(e) => this.props.switchCurrentTrack()}
           >
             <FontAwesomeIcon icon={'far', 'arrow-right'} />
             <span className={'ml-1'}>Next</span>
           </button>
         </div>
-        
+
         <div className={'level-item is-hidden-desktop'}>
           <button className={'button'} onClick={this.props.toggleHistory}>
             <FontAwesomeIcon icon={'far', 'history'} />
