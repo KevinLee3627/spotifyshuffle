@@ -10,7 +10,10 @@ class ActionButtons extends React.Component {
         <div className={'level-item'}>
           <button
             className={'button'}
-            onClick={(e) => this.props.updateTrackLikedStatus(e, true, this.props.current_track)}
+            onClick={(e) => {
+              this.props.updateTrackStatus(e, true, this.props.current_track);
+              this.props.switchCurrentTrack();
+            }}
           >
             <FontAwesomeIcon icon={'fas', 'plus-square'} />
             <span className={'ml-1'}>Add</span>
@@ -20,7 +23,10 @@ class ActionButtons extends React.Component {
         <div className={'level-item'}>
           <button
             className={'button'}
-            onClick={(e) => this.props.updateTrackLikedStatus(e, false, this.props.current_track)}
+            onClick={(e) => {
+              this.props.updateTrackStatus(e, false, this.props.current_track);
+              this.props.switchCurrentTrack();
+            }}
           >
             <FontAwesomeIcon icon={'far', 'forward'} />
             <span className={'ml-1'}>Skip</span>
