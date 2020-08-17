@@ -21,9 +21,8 @@ To do:
 ☐ START HANDLING THINGS WHEN THE SONGS RUN out
 ☐ After all songs play, what should pop out?
 
-Audio flow:
+Audio Flow:
   0. initialAudioSetup()
-      - sets up audio element + preload attribute
       - puts element into state
   1. initTrack()
       - set src attribute on audio_obj in state to new preview_url
@@ -36,7 +35,14 @@ Audio flow:
       - if progress is complete,
   4. switchCurrentTrack
       - pause any previously playing Audio
+      - add previously playing track to history
+      - update track status to disliked if no user action
       - updates recs and current_track in state
-      - checks if current_track is null
+      - checks if current_track is null (no songs left)
         - if not null: call initTrack with new current_track, start from step 1
-        - if null:
+        - if null: go to "After initial audio flow" section
+
+After initial audio flow:
+  ☐ Continue listening
+    ☐ Restart Audio Flow]
+  ☐

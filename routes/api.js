@@ -17,12 +17,12 @@ let redirect_uri = (process.env.MODE === 'PROD') ? process.env.redirectURI : 'ht
 router.get('/login', (req, res, next) => {
   console.log('CALL TO API:LOGIN RECEIVED');
   const base = 'https://accounts.spotify.com/authorize?';
-
+  let scopes = 'user-read-private user-top-read playlist-modify-public playlist-modify-private'
   let params = {
     client_id: process.env.clientID,
     response_type: 'code',
     redirect_uri: redirect_uri,
-    scope: 'user-read-private user-top-read'
+    scope: scopes
   }
   res.send(base+queryString.stringify(params))
 })
@@ -128,8 +128,64 @@ router.get('/getRecommendations', async (req, res, next) => {
   }
 })
 
+/*
+██████  ██       █████  ██    ██ ██      ██ ███████ ████████ ███████
+██   ██ ██      ██   ██  ██  ██  ██      ██ ██         ██    ██
+██████  ██      ███████   ████   ██      ██ ███████    ██    ███████
+██      ██      ██   ██    ██    ██      ██      ██    ██         ██
+██      ███████ ██   ██    ██    ███████ ██ ███████    ██    ███████
+*/
 
+async function getUserId(token) {
+  console.log('getting user info');
+  return axios.get('https://api.spotify.com/v1/me', {
+    headers: {Authorization: `Bearer ${token}`}
+  }).then(res => res.data)
+    .catch(err => console.log(err))
+}
 
+async function createPlaylist(token, name, desc) {
+  console.log('Creating playlist');
+  let user_obj = await getUserId(token);
+  let user_id = user_obj.id;
+  console.log(user_obj);
+  let headers = {
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  }
+  let data = {
+    name: name,
+    description: desc,
+    public: false
+  }
+  return axios.post(`https://api.spotify.com/v1/users/${user_id}/playlists`,
+    data, { headers: headers })
+    .then(res => res.data)
+    .catch(err => console.log(err))
+}
+
+function addTracksToPlaylist(token, playlist_id, tracks) {
+  console.log('Adding tracks to playlist');
+  let uris = tracks.map(track => track.uri);
+  let data = { uris: uris }
+  let headers = {
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  }
+  axios.post(`https://api.spotify.com/v1/playlists/${playlist_id}/tracks`,
+    data, {headers: headers})
+    .then(res => res.data)
+    .catch(err => console.log(err))
+}
+
+router.post('/createPlaylist', async (req, res, next) => {
+  console.log('CALL TO API:createPlaylist RECEIVED');
+  console.log(req.body);
+  let liked_tracks = req.body.liked_tracks;
+  let playlist_data = await createPlaylist(req.session.access_token, 'Test playlist', 'created by API');
+  console.log(playlist_data.id);
+  addTracksToPlaylist(req.session.access_token, playlist_data.id, liked_tracks);
+})
 
 //THIS SHOULD BE LAST BECAUSE IT IS THE LEAST SPECIFIC
 //IT SEEMS REQUESTS 'CASCADE' DOWN AND STOP AT THE FIRST ONE

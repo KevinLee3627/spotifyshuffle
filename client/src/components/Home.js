@@ -3,8 +3,9 @@ import React from 'react';
 // import NavBar from './NavBar.js';
 import Track from './Track.js';
 import ActionButtons from './ActionButtons';
-// import InstructionModal from './InstructionModal';
+import PlaylistNotification from './PlaylistNotification';
 import History from './History';
+import FinishButtons from './FinishButtons';
 import axios from 'axios';
 import '../App.sass';
 
@@ -14,14 +15,18 @@ class Home extends React.Component {
     super(props);
     this.state = {
       track_history: [],
-      track_statuses: [],
       liked_tracks: [],
-      history_showing: true
+      history_showing: true,
+      is_finished: false,
+      playlist_created: false,
     }
     this.trackAudioProgress = this.trackAudioProgress.bind(this);
     this.switchCurrentTrack = this.switchCurrentTrack.bind(this);
     // this.toggleHistory = this.toggleHistory.bind(this);
     this.updateTrackStatus = this.updateTrackStatus.bind(this);
+    this.continueListening = this.continueListening.bind(this);
+    this.createPlaylist = this.createPlaylist.bind(this);
+    this.showPlaylistNotification = this.showPlaylistNotification.bind(this);
   }
 
   async componentDidMount() {
@@ -42,7 +47,7 @@ class Home extends React.Component {
     } else {
       this.setState({
         recs: data.slice(0, desired),
-        current_track: data.slice(0, 1)[0]
+        current_track: data[0]
       }, () => {
         console.log('Initial state set. Now playing first song. Next line logs current state.');
         console.log(this.state);
@@ -122,7 +127,8 @@ class Home extends React.Component {
     //Update state w/ next track as new current track,
     //remove previously playing track from recs array
     let new_recs = this.state.recs.slice(1);
-    let new_current_track = new_recs.length > 1 ? this.state.recs[1] : null;
+    console.log(new_recs);
+    let new_current_track = new_recs.length >= 1 ? this.state.recs[1] : null;
     this.setState({
         recs: new_recs,
         current_track: new_current_track
@@ -131,12 +137,18 @@ class Home extends React.Component {
         console.log(`Switching track to ${new_current_track.name}`);
         this.initTrack(this.state.current_track);
       } else {
-        alert('no songs left to play');
+        console.log('Audio flow complete!');
+        this.toggleAudioFlowStatus();
+        // this.continueListening();
       }
     })
   }
 
-
+  toggleAudioFlowStatus() {
+    this.setState(prev_state => {
+      return {is_finished: !prev_state.is_finished}
+    })
+  }
 
   /*------------------------------------------*/
   /*-----------------HISTORY------------------*/
@@ -154,16 +166,8 @@ class Home extends React.Component {
   }
 
   /*------------------------------------------*/
-  /*---------------LIKED TRACKS---------------*/
+  /*---------------TRACK STATUS---------------*/
   /*------------------------------------------*/
-  // updateTrackStatus(e, bool, track) {
-  //   console.log('asdfasdf');
-  //   this.setState(old_state => {
-  //     let track_data = {track_id: track.id, liked: bool}
-  //     return {tracks_liked_status: old_state.tracks_liked_status.concat( [track_data] )}
-  //   }, () => {this.playNextTrack()} )
-  // }
-
   updateTrackStatus(e, is_liked) {
     console.log(this.state.current_track.name+':::'+is_liked);
     if (is_liked) {
@@ -180,12 +184,49 @@ class Home extends React.Component {
     return this.state.liked_tracks.includes(track.id);
   }
 
+  /*------------------------------------------*/
+  /*--------------KEEP LISTENING--------------*/
+  /*------------------------------------------*/
+
+  continueListening() {
+    this.toggleAudioFlowStatus();
+    this.getRecommendationsFromServer([], 20, 10);
+  }
+
+  /*------------------------------------------*/
+  /*--------------CREATE PLAYLIST-------------*/
+  /*------------------------------------------*/
+
+  showPlaylistNotification() {
+    console.log('Showing notif');
+    this.setState({playlist_created: true})
+  }
+
+  createPlaylist() {
+    //1. Create playlist
+    //2. Add tracks to playlist
+    //3. Get all liked tracks
+    //4. Get link to play
+    //5. Add link to notification
+    let data = {liked_tracks: this.state.liked_tracks}
+    let liked_tracks_data = this.state.track_history.filter(track => {
+      return this.state.liked_tracks.includes(track.id)
+    })
+    let post_data = {liked_tracks: liked_tracks_data}
+    console.log(liked_tracks_data);
+    axios.post('/api/createPlaylist', post_data)
+         .then(res => {
+           this.showPlaylistNotification();
+         }).catch(err => console.log(err));
+
+    // this.showPlaylistNotification();
+  }
+
   render() {
     return(
       <section className={'section'}>
         <div className={'columns'}>
           <div className={'column is-4'}>
-            <audio src={this.state.audio_url}></audio>
             <Track
               current_track={this.state.current_track}
               audio_progress={this.state.audio_progress}
@@ -195,15 +236,22 @@ class Home extends React.Component {
               toggleHistory={this.toggleHistory}
               updateTrackStatus={this.updateTrackStatus}
               current_track={this.state.current_track}
+              is_finished={this.state.is_finished}
+            />
+            <FinishButtons
+              is_finished={this.state.is_finished}
+              continueListening={this.continueListening}
+              createPlaylist={this.createPlaylist}
+            />
+            <PlaylistNotification
+              playlist_created={this.state.playlist_created}
             />
           </div>
 
           <div className={'column is-8'}>
             <History
-              // tracks_liked_status={this.state.tracks_liked_status}
               track_history={this.state.track_history}
               liked_tracks={this.state.liked_tracks}
-              // history_showing={this.state.history_showing}
             />
           </div>
 
