@@ -180,11 +180,9 @@ function addTracksToPlaylist(token, playlist_id, tracks) {
 
 router.post('/createPlaylist', async (req, res, next) => {
   console.log('CALL TO API:createPlaylist RECEIVED');
-  console.log(req.body);
-  let liked_tracks = req.body.liked_tracks;
   let playlist_data = await createPlaylist(req.session.access_token, 'Test playlist', 'created by API');
-  console.log(playlist_data.id);
-  addTracksToPlaylist(req.session.access_token, playlist_data.id, liked_tracks);
+  console.log(playlist_data);
+  addTracksToPlaylist(req.session.access_token, playlist_data.id, req.body.liked_tracks);
 })
 
 //THIS SHOULD BE LAST BECAUSE IT IS THE LEAST SPECIFIC

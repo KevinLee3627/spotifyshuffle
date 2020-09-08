@@ -45,4 +45,6 @@ Audio Flow:
 After initial audio flow:
   ☐ Continue listening
     ☐ Restart Audio Flow]
-  ☐
+  ☐ Create playlist
+    ☐ create the playlist, then show user a link to that playlist
+    ☐ Make PlaylistNotification show up! It's not working :(

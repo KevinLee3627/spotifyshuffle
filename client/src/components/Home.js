@@ -202,7 +202,7 @@ class Home extends React.Component {
     this.setState({playlist_created: true})
   }
 
-  createPlaylist() {
+  async createPlaylist() {
     //1. Create playlist
     //2. Add tracks to playlist
     //3. Get all liked tracks
@@ -214,12 +214,10 @@ class Home extends React.Component {
     })
     let post_data = {liked_tracks: liked_tracks_data}
     console.log(liked_tracks_data);
-    axios.post('/api/createPlaylist', post_data)
-         .then(res => {
-           this.showPlaylistNotification();
-         }).catch(err => console.log(err));
-
-    // this.showPlaylistNotification();
+    let playlist = await axios.post('/api/createPlaylist', post_data)
+         .then(res => {console.log(res.data)})
+         .catch(err => console.log(err));
+    this.showPlaylistNotification();
   }
 
   render() {
